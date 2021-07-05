@@ -43,15 +43,34 @@ class _MyAppState extends State<MyApp> {
                           child: ListView.builder(
                             itemCount: mapLength,
                             itemBuilder: (BuildContext context, int index) {
-                              DeviceModel device = DeviceModel.fromMap(data[keys[index]]);
+                              DeviceModel device =
+                                  DeviceModel.fromMap(data[keys[index]]);
                               return ListTile(
                                 leading: Text(device.rssi),
                                 title: Text(device.name),
                                 subtitle: Text(device.address),
                                 trailing: IconButton(
                                   icon: Icon(Icons.double_arrow),
-                                  onPressed: ()async{
-                                    await BleScanner.attemptConnection(index);
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            Scaffold(
+                                          appBar: AppBar(
+                                            title: Text('${keys[index]}\nConnection stream'),
+                                          ),
+                                          body: StreamBuilder(
+                                            builder: (BuildContext context,
+                                                AsyncSnapshot snapshot) {
+                                              return Text(
+                                                snapshot.data.toString(),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    );
                                   },
                                 ),
                               );
@@ -82,7 +101,8 @@ class _MyAppState extends State<MyApp> {
                 child: Column(
                   children: [
                     SizedBox(height: 15),
-                    Text('Please wait until the bluetooth turns on before starting scan'),
+                    Text(
+                        'Please wait until the bluetooth turns on before starting scan'),
                     SizedBox(height: 15),
                     TextButton(
                       child: Text('Enable Bluetooth'),

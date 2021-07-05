@@ -62,6 +62,10 @@ class BleScanner {
     }
   }
 
+  static Stream<void> connectToDevice(int index) async* {
+    attemptConnection(index).asStream().asyncExpand((event) => null);
+  }
+
   static Future<void> stopBleScan() async {
     try {
       await _methodChannel.invokeMethod(stopBleScanTAG);
