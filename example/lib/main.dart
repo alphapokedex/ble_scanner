@@ -35,7 +35,24 @@ class _MyAppState extends State<MyApp> {
                       } else if (snapshot.connectionState ==
                               ConnectionState.active &&
                           snapshot.hasData) {
-                        widget = Text(snapshot.data);
+                        Map data = snapshot.data;
+                        int mapLength = data.length;
+                        List keys = data.keys.toList();
+                        print(mapLength);
+                        widget = SizedBox(
+                          height: 300,
+                          child: ListView.builder(
+                            itemCount: mapLength,
+                            itemBuilder: (BuildContext context, int index) {
+                              DeviceModel device = DeviceModel.fromMap(data[keys[index]]);
+                              return ListTile(
+                                title: Text(device.name),
+                                subtitle: Text(device.address),
+                                trailing: Text(device.rssi.toString()),
+                              );
+                            },
+                          ),
+                        );
                       } else if (snapshot.connectionState ==
                           ConnectionState.done) {
                         widget = Text('DONE');
@@ -44,6 +61,7 @@ class _MyAppState extends State<MyApp> {
                       return Center(child: widget);
                     },
                   ),
+                  Spacer(),
                   TextButton(
                     child: Text('Stop Scanning'),
                     onPressed: () async {
@@ -83,6 +101,26 @@ class _MyAppState extends State<MyApp> {
                 ),
               ),
       ),
+    );
+  }
+}
+
+class DeviceModel {
+  final String address;
+  final String name;
+  final String rssi;
+
+  DeviceModel({
+    required this.address,
+    required this.name,
+    required this.rssi,
+  });
+
+  factory DeviceModel.fromMap(Map deviceInfo) {
+    return DeviceModel(
+      address: deviceInfo['DeviceAddress'] ?? '00:A0:00:00:0A:AA',
+      name: deviceInfo['DeviceName'] ?? 'Unnamed',
+      rssi: deviceInfo['DeviceRSSI'] ?? '0',
     );
   }
 }

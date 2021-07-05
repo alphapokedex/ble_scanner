@@ -11,10 +11,12 @@ import android.os.Build
 import android.os.ParcelUuid
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleEventObserver
 import io.flutter.Log
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.embedding.engine.plugins.lifecycle.HiddenLifecycleReference
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.EventChannel.EventSink
 import io.flutter.plugin.common.EventChannel.StreamHandler
@@ -29,7 +31,6 @@ class BleScannerPlugin : FlutterPlugin, MethodCallHandler, StreamHandler, Activi
 
     private lateinit var methodChannel: MethodChannel
     private lateinit var eventChannel: EventChannel
-    private lateinit var eventSink: EventSink
     private lateinit var activity: Activity
 
     private val bleMethods = BleRelatedMethods
@@ -75,7 +76,7 @@ class BleScannerPlugin : FlutterPlugin, MethodCallHandler, StreamHandler, Activi
 
     /** StreamHandler Open */
     override fun onListen(arguments: Any?, events: EventSink) {
-        eventSink = events
+        bleMethods.eventSink = events
     }
 
     override fun onCancel(arguments: Any?) {}
@@ -84,15 +85,25 @@ class BleScannerPlugin : FlutterPlugin, MethodCallHandler, StreamHandler, Activi
     /** ActivityAware Open */
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity
+        (binding.lifecycle as HiddenLifecycleReference)
+            .lifecycle
+            .addObserver(LifecycleEventObserver { source, event ->
+                Log.e("Activity state: ", event.toString())
+            })
     }
 
-    override fun onDetachedFromActivityForConfigChanges() {}
+    override fun onDetachedFromActivityForConfigChanges() {
+        Log.e("Activity aware: ", "onDetachedFromActivityForConfigChanges")
+    }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
         activity = binding.activity
+        Log.e("Activity aware: ", "onReattachedToActivityForConfigChanges")
     }
 
-    override fun onDetachedFromActivity() {}
+    override fun onDetachedFromActivity() {
+        Log.e("Activity aware: ", "onDetachedFromActivity")
+    }
 
     /** ActivityAware Close */
 
@@ -122,7 +133,7 @@ class BleRelatedMethods {
         private var isScanning = false
 
         private var isLocationPermissionGranted: Boolean? = null
-
+        var eventSink: EventSink? = null
 
         fun enableBt(activity: Activity, result: Result) {
             Utils.methodLog(enableBtTAG)
@@ -154,9 +165,10 @@ class BleRelatedMethods {
                     mScanResultDataMap.clear()
                     val bleDevice = result.device
                     mScanResultInnerMap["DeviceAddress"] = bleDevice.address.toString()
-                    mScanResultInnerMap["DeviceName"] = bleDevice.name.toString()
+                    mScanResultInnerMap["DeviceName"] = bleDevice.name ?: "Unnamed"
                     mScanResultInnerMap["DeviceRSSI"] = result.rssi.toString()
                     mScanResultDataMap[bleDevice.address] = mScanResultInnerMap
+                    eventSink?.success(mScanResultDataMap)
                 }
             }
 
