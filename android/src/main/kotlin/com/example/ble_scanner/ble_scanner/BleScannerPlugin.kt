@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.*
 import android.content.Context
 import android.content.Intent
@@ -46,11 +47,11 @@ class BleScannerPlugin : FlutterPlugin, MethodCallHandler, StreamHandler, Activi
 
     private val connectionEventListener by lazy {
         ConnectionEventListener().apply {
-            onConnectionSetupComplete = { _ ->
-                /*Intent(this, BleOperationsActivity::class.java).also {
+            onConnectionSetupComplete = { gatt ->
+                Intent(activity.applicationContext, BleOperationsActivity::class.java).also {
                     it.putExtra(BluetoothDevice.EXTRA_DEVICE, gatt.device)
-                    startActivity(it)
-                }*/
+                    activity.startActivity(it)
+                }
                 ConnectionManager.unregisterListener(this)
             }
             onDisconnect = {

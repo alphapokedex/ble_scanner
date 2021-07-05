@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<EditText xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:maxLines="1"
+    android:hint="Enter payload in hex (0-9, a-f, A-F)"
+    android:digits="0123456789abcdefABCDEF"
+    android:importantForAutofill="no"
+    android:inputType="text" />
