@@ -61,6 +61,7 @@ class _MyAppState extends State<MyApp> {
                                             title: Text('${keys[index]}\nConnection stream'),
                                           ),
                                           body: StreamBuilder(
+                                            stream: BleScanner.connectToDevice(index),
                                             builder: (BuildContext context,
                                                 AsyncSnapshot snapshot) {
                                               return Text(
