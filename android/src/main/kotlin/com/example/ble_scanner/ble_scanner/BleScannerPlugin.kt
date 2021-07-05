@@ -2,17 +2,23 @@ package com.example.ble_scanner.ble_scanner
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.*
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Build
-import android.os.ParcelUuid
+import android.os.Bundle
+//import android.os.ParcelUuid
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleEventObserver
+import com.example.ble_scanner.ble_scanner.ble.ConnectionEventListener
+import com.example.ble_scanner.ble_scanner.ble.ConnectionManager
 import io.flutter.Log
+import io.flutter.app.FlutterActivityEvents
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -27,15 +33,37 @@ import io.flutter.plugin.common.MethodChannel.Result
 
 
 /** BleScannerPlugin */
-class BleScannerPlugin : FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAware {
+class BleScannerPlugin : FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAware,
+    FlutterActivityEvents {
 
     private lateinit var methodChannel: MethodChannel
     private lateinit var eventChannel: EventChannel
     private lateinit var activity: Activity
+    private var bleScanner: BluetoothLeScanner? = null
 
     private val bleMethods = BleRelatedMethods
     private val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-    private val bleScanner = bluetoothAdapter.bluetoothLeScanner
+
+    private val connectionEventListener by lazy {
+        ConnectionEventListener().apply {
+            onConnectionSetupComplete = { _ ->
+                /*Intent(this, BleOperationsActivity::class.java).also {
+                    it.putExtra(BluetoothDevice.EXTRA_DEVICE, gatt.device)
+                    startActivity(it)
+                }*/
+                ConnectionManager.unregisterListener(this)
+            }
+            onDisconnect = {
+                activity.runOnUiThread {
+                    val alert = AlertDialog.Builder(activity.applicationContext)
+                    alert.setTitle("Disconnected")
+                    alert.setMessage("Disconnected or unable to connect to device.")
+                    alert.setPositiveButton("OK") { _, _ -> }
+                    alert.show()
+                }
+            }
+        }
+    }
 
     /**********************
      * FlutterPlugin Open *
@@ -50,24 +78,34 @@ class BleScannerPlugin : FlutterPlugin, MethodCallHandler, StreamHandler, Activi
 
     /** MethodCallHandler Open */
     override fun onMethodCall(call: MethodCall, result: Result) {
-        when (call.method) {
-            bleMethods.enableBtTAG -> {
-                bleMethods.enableBt(activity, result)
-            }
-            bleMethods.requestLocationPermissionTAG -> {
-                bleMethods.requestLocationPermission(activity, result)
-            }
-            bleMethods.startBleScanTAG -> {
-                bleMethods.startBleScan(bleScanner, activity, result)
-            }
-            bleMethods.isScanningTAG -> {
-                bleMethods.isScanning(result)
-            }
-            bleMethods.stopBleTAG -> {
-                bleMethods.stopBleScan(bleScanner, result)
-            }
-            else -> {
-                result.notImplemented()
+        with(bleMethods) {
+            when (call.method) {
+                enableBtTAG -> {
+                    enableBt(activity, result)
+                }
+                requestLocationPermissionTAG -> {
+                    requestLocationPermission(activity, result)
+                }
+                startBleScanTAG -> {
+                    bleScanner = bluetoothAdapter.bluetoothLeScanner
+                    startBleScan(bleScanner, activity, result)
+                }
+                isScanningTAG -> {
+                    isScanning(result)
+                }
+                attemptConnectionTAG -> {
+                    val index = call.argument<Int>("ScannedDeviceIndex")!!
+                    attemptConnection(index, activity, result)
+                }
+                stopBleTAG -> {
+                    stopBleScan(bleScanner, activity, result) {
+                        bleScanner = null
+                        Log.w(stopBleTAG, "BLE scanner dismissed")
+                    }
+                }
+                else -> {
+                    result.notImplemented()
+                }
             }
         }
     }
@@ -87,8 +125,11 @@ class BleScannerPlugin : FlutterPlugin, MethodCallHandler, StreamHandler, Activi
         activity = binding.activity
         (binding.lifecycle as HiddenLifecycleReference)
             .lifecycle
-            .addObserver(LifecycleEventObserver { source, event ->
-                Log.e("Activity state: ", event.toString())
+            .addObserver(LifecycleEventObserver { _, event ->
+                Log.e("Activity state: ", "$event onAttachedToActivity")
+                if (event.toString() == "ON_RESUME") {
+                    ConnectionManager.registerListener(connectionEventListener)
+                }
             })
     }
 
@@ -99,13 +140,71 @@ class BleScannerPlugin : FlutterPlugin, MethodCallHandler, StreamHandler, Activi
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
         activity = binding.activity
         Log.e("Activity aware: ", "onReattachedToActivityForConfigChanges")
+        (binding.lifecycle as HiddenLifecycleReference)
+            .lifecycle
+            .addObserver(LifecycleEventObserver { _, event ->
+                Log.e(
+                    "Activity state: ",
+                    "$event onReattachedToActivityForConfigChanges"
+                )
+                if (event.toString() == "ON_RESUME") {
+                    ConnectionManager.registerListener(connectionEventListener)
+                }
+            })
     }
 
     override fun onDetachedFromActivity() {
         Log.e("Activity aware: ", "onDetachedFromActivity")
+        ConnectionManager.unregisterListener(connectionEventListener)
+        //ConnectionManager.teardownConnection(device)
+    }
+    /** ActivityAware Close */
+
+    /** FlutterActivityEvents Open */
+    override fun onConfigurationChanged(newConfig: Configuration) {}
+
+    override fun onLowMemory() {}
+
+    override fun onTrimMemory(level: Int) {}
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+        return true
     }
 
-    /** ActivityAware Close */
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>?,
+        grantResults: IntArray?
+    ): Boolean {
+        return true
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {}
+
+    override fun onNewIntent(intent: Intent?) {}
+
+    override fun onPause() {}
+
+    override fun onStart() {}
+
+    override fun onResume() {
+        Log.w("onResume", "[ onResume called ]")
+        ConnectionManager.registerListener(connectionEventListener)
+    }
+
+    override fun onPostResume() {}
+
+    override fun onDestroy() {}
+
+    override fun onStop() {}
+
+    override fun onBackPressed(): Boolean {
+        return true
+    }
+
+    override fun onUserLeaveHint() {}
+
+    /** FlutterActivityEvents Close */
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         methodChannel.setMethodCallHandler(null)
@@ -122,9 +221,10 @@ class BleRelatedMethods {
         const val requestLocationPermissionTAG = "requestLocationPermission"
         const val startBleScanTAG = "startBleScan"
         const val isScanningTAG = "isScanning"
+        const val attemptConnectionTAG = "attemptConnection"
         const val stopBleTAG = "stopBleScan"
 
-        private const val ENVIRONMENTAL_SERVICE_UUID = 0x181A
+        //private const val ENVIRONMENTAL_SERVICE_UUID = 0x181A
 
         private val scanResults = mutableListOf<ScanResult>()
         private val mScanResultInnerMap = mutableMapOf<String, String>()
@@ -138,7 +238,7 @@ class BleRelatedMethods {
         fun enableBt(activity: Activity, result: Result) {
             Utils.methodLog(enableBtTAG)
             val enableBT = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            activity.startActivity(enableBT)
+            activity.startActivityForResult(enableBT, 1)
             result.success(enableBtTAG)
         }
 
@@ -194,6 +294,13 @@ class BleRelatedMethods {
                 return
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                activity.runOnUiThread {
+                    val alert = AlertDialog.Builder(activity.applicationContext)
+                    alert.setTitle("Required")
+                    alert.setMessage("Location permission is needed to scan & get information from BLE devices.")
+                    alert.setPositiveButton("OK") { _, _ -> }
+                    alert.show()
+                }
                 requestPermissions(
                     activity,
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
@@ -203,13 +310,23 @@ class BleRelatedMethods {
             }
         }
 
-        fun startBleScan(bleScanner: BluetoothLeScanner, activity: Activity, result: Result) {
-            Utils.methodLog("startBleScan")
+        fun startBleScan(bleScanner: BluetoothLeScanner?, activity: Activity, result: Result) {
+            Utils.methodLog(startBleScanTAG)
             isLocationPermissionGranted = hasPermissions(activity.applicationContext)
             val scanSettings = ScanSettings.Builder().build()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isLocationPermissionGranted!!) {
                 requestLocationPermission(activity, result)
-            } else {
+            }
+            if (bleScanner == null) {
+                activity.runOnUiThread {
+                    val alert = AlertDialog.Builder(activity.applicationContext)
+                    alert.setTitle("Adaptor not found")
+                    alert.setMessage("Please turn on Bluetooth before starting scan")
+                    alert.setPositiveButton("OK") { _, _ -> }
+                    alert.show()
+                }
+            }
+            if (bleScanner != null) {
                 scanResults.clear()
                 mScanResultDataMap.clear()
                 mScanResultInnerMap.clear()
@@ -220,14 +337,43 @@ class BleRelatedMethods {
         }
 
         fun isScanning(result: Result) {
-            Utils.methodLog("isScanning")
+            Utils.methodLog(isScanningTAG)
             result.success(isScanning)
         }
 
-        fun stopBleScan(bleScanner: BluetoothLeScanner, result: Result) {
+        fun attemptConnection(index: Int, activity: Activity, result: Result) {
+            val device = scanResults[index].device
+            Utils.methodLog(attemptConnectionTAG)
+            Log.w(
+                attemptConnectionTAG,
+                "Attempting connection with device ${device.name ?: "Unnamed"}|${device.address}"
+            )
+            ConnectionManager.connect(device, activity)
+            result.success("Success")
+        }
+
+        fun stopBleScan(
+            bleScanner: BluetoothLeScanner?,
+            activity: Activity,
+            result: Result,
+            callBack: () -> Unit
+        ) {
             Utils.methodLog("stopBleScan")
-            bleScanner.stopScan(scanCallback)
-            isScanning = false
+            if (bleScanner == null) {
+                activity.runOnUiThread {
+                    val alert = AlertDialog.Builder(activity.applicationContext)
+                    alert.setTitle("Adaptor not found")
+                    alert.setMessage("Please turn on Bluetooth before stopping scan")
+                    alert.setPositiveButton("OK") { _, _ -> }
+                    alert.show()
+                }
+            }
+            if (bleScanner != null) {
+                bleScanner.stopScan(scanCallback)
+                scanResults.clear()
+                isScanning = false
+            }
+            callBack.invoke()
             result.success("Success")
         }
     }

@@ -38,7 +38,6 @@ class _MyAppState extends State<MyApp> {
                         Map data = snapshot.data;
                         int mapLength = data.length;
                         List keys = data.keys.toList();
-                        print(mapLength);
                         widget = SizedBox(
                           height: 300,
                           child: ListView.builder(
@@ -46,9 +45,15 @@ class _MyAppState extends State<MyApp> {
                             itemBuilder: (BuildContext context, int index) {
                               DeviceModel device = DeviceModel.fromMap(data[keys[index]]);
                               return ListTile(
+                                leading: Text(device.rssi),
                                 title: Text(device.name),
                                 subtitle: Text(device.address),
-                                trailing: Text(device.rssi.toString()),
+                                trailing: IconButton(
+                                  icon: Icon(Icons.double_arrow),
+                                  onPressed: ()async{
+                                    await BleScanner.attemptConnection(index);
+                                  },
+                                ),
                               );
                             },
                           ),
@@ -76,6 +81,9 @@ class _MyAppState extends State<MyApp> {
             : Center(
                 child: Column(
                   children: [
+                    SizedBox(height: 15),
+                    Text('Please wait until the bluetooth turns on before starting scan'),
+                    SizedBox(height: 15),
                     TextButton(
                       child: Text('Enable Bluetooth'),
                       onPressed: () async {

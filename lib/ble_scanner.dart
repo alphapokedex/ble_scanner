@@ -11,10 +11,11 @@ class BleScanner {
       const EventChannel('ble_scanner_event');
 
   static const String enableBtTAG = 'enableBt';
-  static const String isScanningTAG = 'isScanning';
   static const String requestLocationPermissionTAG =
       'requestLocationPermission';
+  static const String isScanningTAG = 'isScanning';
   static const String startBleScanTAG = 'startBleScan';
+  static const String attemptConnectionTAG = 'attemptConnection';
   static const String stopBleScanTAG = 'stopBleScan';
 
   static Stream<dynamic> get eventStream =>
@@ -47,6 +48,17 @@ class BleScanner {
       await _methodChannel.invokeMethod(startBleScanTAG);
     } on PlatformException {
       log(startBleScanTAG);
+    }
+  }
+
+  static Future<void> attemptConnection(int index) async {
+    try {
+      await _methodChannel.invokeMethod(
+        attemptConnectionTAG,
+        {'ScannedDeviceIndex': index},
+      );
+    } on PlatformException {
+      log(attemptConnectionTAG);
     }
   }
 

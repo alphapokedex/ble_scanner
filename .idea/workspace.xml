@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b0fb3ff0-2ac9-4fc6-86fe-5d28ac5300bf" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/example_lib_main_dart.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/kotlin/com/example/ble_scanner/ble_scanner/BleScannerPlugin.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/kotlin/com/example/ble_scanner/ble_scanner/BleScannerPlugin.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/ble_scanner.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ble_scanner.dart" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1uqXzKXFgYKLU89U2rOx0U6pALR" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
+    <property name="io.flutter.reload.alreadyRun" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ble-starter-android" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
+    <property name="show.migrate.to.gradle.popup" value="false" />
+  </component>
+  <component name="RunManager" selected="Flutter.example/lib/main.dart">
+    <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
+      <option name="filePath" value="$PROJECT_DIR$/example/lib/main.dart" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b0fb3ff0-2ac9-4fc6-86fe-5d28ac5300bf" name="Default Changelist" comment="" />
+      <created>1625394360477</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1625394360477</updated>
+    </task>
+    <task id="LOCAL-00001" summary="feat(master): BLE Scanner&#10;&#10;Key points:&#10;- Enabling BT programmatically&#10;- Requesting fine location permission programmatically &#10;- No scan filter&#10;- Default scan settings&#10;- ScanCallBack which adds device info in mutableMaps for future use in case any device is found.&#10;&#10;Build Status: Runs without exceptions">
+      <created>1625452632771</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1625452632771</updated>
+    </task>
+    <task id="LOCAL-00002" summary="feat(master): Example app stream&#10;&#10;- Added device model for parsing map to dart object&#10;&#10;Build Status: Runs without exception">
+      <created>1625458885446</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1625458885446</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="feat(master): BLE Scanner&#10;&#10;Key points:&#10;- Enabling BT programmatically&#10;- Requesting fine location permission programmatically &#10;- No scan filter&#10;- Default scan settings&#10;- ScanCallBack which adds device info in mutableMaps for future use in case any device is found.&#10;&#10;Build Status: Runs without exceptions" />
+    <MESSAGE value="feat(master): Example app stream&#10;&#10;- Added device model for parsing map to dart object&#10;&#10;Build Status: Runs without exception" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(master): Example app stream&#10;&#10;- Added device model for parsing map to dart object&#10;&#10;Build Status: Runs without exception" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="26" y="69" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1625402130749">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state x="26" y="69" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1600.860@0.0.1600.860" timestamp="1625402130749" />
+    <state x="354" y="168" key="FileChooserDialogImpl" timestamp="1625472497647">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state x="354" y="168" key="FileChooserDialogImpl/0.0.1600.860@0.0.1600.860" timestamp="1625472497647" />
+    <state width="1034" height="197" key="GridCell.Tab.0.bottom" timestamp="1625472446317">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state width="1034" height="197" key="GridCell.Tab.0.bottom/0.0.1600.860@0.0.1600.860" timestamp="1625472446317" />
+    <state width="1034" height="197" key="GridCell.Tab.0.center" timestamp="1625472446317">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state width="1034" height="197" key="GridCell.Tab.0.center/0.0.1600.860@0.0.1600.860" timestamp="1625472446317" />
+    <state width="1034" height="197" key="GridCell.Tab.0.left" timestamp="1625472446317">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state width="1034" height="197" key="GridCell.Tab.0.left/0.0.1600.860@0.0.1600.860" timestamp="1625472446317" />
+    <state width="1034" height="197" key="GridCell.Tab.0.right" timestamp="1625472446317">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state width="1034" height="197" key="GridCell.Tab.0.right/0.0.1600.860@0.0.1600.860" timestamp="1625472446317" />
+    <state width="1034" height="197" key="GridCell.Tab.1.bottom" timestamp="1625472446317">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state width="1034" height="197" key="GridCell.Tab.1.bottom/0.0.1600.860@0.0.1600.860" timestamp="1625472446317" />
+    <state width="1034" height="197" key="GridCell.Tab.1.center" timestamp="1625472446317">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state width="1034" height="197" key="GridCell.Tab.1.center/0.0.1600.860@0.0.1600.860" timestamp="1625472446317" />
+    <state width="1034" height="197" key="GridCell.Tab.1.left" timestamp="1625472446317">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state width="1034" height="197" key="GridCell.Tab.1.left/0.0.1600.860@0.0.1600.860" timestamp="1625472446317" />
+    <state width="1034" height="197" key="GridCell.Tab.1.right" timestamp="1625472446317">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state width="1034" height="197" key="GridCell.Tab.1.right/0.0.1600.860@0.0.1600.860" timestamp="1625472446317" />
+    <state x="308" y="139" key="RollbackChangesDialog" timestamp="1625459751975">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state x="308" y="139" key="RollbackChangesDialog/0.0.1600.860@0.0.1600.860" timestamp="1625459751975" />
+    <state x="338" y="155" key="Vcs.Push.Dialog.v2" timestamp="1625458888513">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state x="338" y="155" key="Vcs.Push.Dialog.v2/0.0.1600.860@0.0.1600.860" timestamp="1625458888513" />
+    <state x="235" y="181" width="672" height="678" key="search.everywhere.popup" timestamp="1625394714678">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state x="235" y="181" width="672" height="678" key="search.everywhere.popup/0.0.1600.860@0.0.1600.860" timestamp="1625394714678" />
+  </component>
+</project>
